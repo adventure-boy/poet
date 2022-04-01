@@ -6,7 +6,7 @@ import org.springframework.boot.SpringBootConfiguration;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 
 @SpringBootApplication
-@MapperScan("")
+@MapperScan("com.adventureboy.system.mapper")
 public class PoetCoreSystemApplication {
     public static void main(String[] args) {
         SpringApplication.run(PoetCoreSystemApplication.class, args);
