@@ -1,7 +1,10 @@
 package com.adventureboy.system.utils;
 
+import org.springframework.stereotype.Component;
+
 import java.util.Random;
 
+@Component
 public class RandomStringUtil {
     public static String getRandomString(Integer num) {
         //用于储存随机生成的字符
