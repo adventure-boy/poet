@@ -9,7 +9,7 @@ public class SysUser {
 
     private String username;
 
-    private String realname;
+    private String realName;
 
     private String password;
 
@@ -23,7 +23,7 @@ public class SysUser {
 
     private String phone;
 
-    private Boolean status;
+    private Integer status;
 
     private Date createTime;
 
@@ -54,11 +54,11 @@ public class SysUser {
     }
 
     public String getRealname() {
-        return realname;
+        return realName;
     }
 
     public void setRealname(String realname) {
-        this.realname = realname == null ? null : realname.trim();
+        this.realName = realname == null ? null : realname.trim();
     }
 
     public String getPassword() {
@@ -109,11 +109,11 @@ public class SysUser {
         this.phone = phone == null ? null : phone.trim();
     }
 
-    public Boolean getStatus() {
+    public Integer getStatus() {
         return status;
     }
 
-    public void setStatus(Boolean status) {
+    public void setStatus(Integer status) {
         this.status = status;
     }
 

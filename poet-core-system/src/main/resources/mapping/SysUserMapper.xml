@@ -16,6 +16,9 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
+  <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap" >
+    select * from sys_user where username = #{username,jdbcType=VARCHAR}
+  </select>
   <sql id="Base_Column_List" >
     id, user_id, username, realname, password, salt, birthday, sex, email, phone, status, 
     create_time, update_time
