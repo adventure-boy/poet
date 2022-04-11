@@ -10,6 +10,7 @@ import com.adventureboy.vo.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -21,6 +22,9 @@ public class LoginController {
 
     @Autowired
     SysUserService sysUserService;
+
+    @Autowired
+    UserDetailsService userDetailsService;
 
     @GetMapping("/getVerificationCode")
     public Result<String> getVerificationCode() {
@@ -38,7 +42,7 @@ public class LoginController {
         }
     }
 
-    @PostMapping
+    @PostMapping("/confirm")
     public Result<JSONObject> login(@RequestBody SysLoginModel loginModel) {
         Result<JSONObject> result = new Result<>();
         String username = loginModel.getUsername();
