@@ -4,6 +4,7 @@ import com.adventureboy.system.service.impl.PoetAuthenticationProvider;
 import com.adventureboy.system.service.impl.UserDetailsServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
@@ -11,6 +12,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.PrintWriter;
 import java.time.YearMonth;
@@ -19,55 +21,64 @@ import java.time.YearMonth;
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
-        web.ignoring().antMatchers("/login/*");
+        web.ignoring().antMatchers("/login/*","/beans");
     }
 
-//    @Override
-//    protected void configure(HttpSecurity http) throws Exception {
-//        http.csrf().disable()
-//                .authorizeHttpRequests()
-//                .anyRequest()
-//                .permitAll();
-//    }
-@Override
-protected void configure(HttpSecurity http) throws Exception {
-    http.authorizeRequests()
-            .antMatchers("/vc.jpg").permitAll()
-            .anyRequest().authenticated()
-            .and()
-            .formLogin()
-            .successHandler((req, resp, auth) -> {
-                resp.setContentType("application/json;charset=utf-8");
-                PrintWriter out = resp.getWriter();
-                out.write(new ObjectMapper().writeValueAsString("success"));
-                out.flush();
-                out.close();
-            })
-            .failureHandler((req, resp, e) -> {
-                resp.setContentType("application/json;charset=utf-8");
-                PrintWriter out = resp.getWriter();
-                out.write(new ObjectMapper().writeValueAsString("failure"));
-                out.flush();
-                out.close();
-            })
-            .permitAll()
-            .and()
-            .csrf().disable();
-}
+    @Override
+    protected void configure(HttpSecurity http) throws Exception {
+        http.csrf().disable()
+                .authorizeHttpRequests()
+                .anyRequest()
+                .permitAll()
+                .and()
+                .addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+    }
+//@Override
+//protected void configure(HttpSecurity http) throws Exception {
+//    http.authorizeRequests()
+//            .antMatchers("/vc.jpg").permitAll()
+//            .anyRequest().authenticated()
+//            .and()
+//            .formLogin()
+//            .successHandler((req, resp, auth) -> {
+//                resp.setContentType("application/json;charset=utf-8");
+//                PrintWriter out = resp.getWriter();
+//                out.write(new ObjectMapper().writeValueAsString("success"));
+//                out.flush();
+//                out.close();
+//            })
+//            .failureHandler((req, resp, e) -> {
+//                resp.setContentType("application/json;charset=utf-8");
+//                PrintWriter out = resp.getWriter();
+//                out.write(new ObjectMapper().writeValueAsString("failure"));
+//                out.flush();
+//                out.close();
+//            })
+//            .permitAll()
+//            .and()
+//            .csrf().disable();
+//}
 
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
     }
 
-    @Bean
+//    @Bean
     public PoetAuthenticationProvider poetAuthenticationProvider() {
         PoetAuthenticationProvider provider = new PoetAuthenticationProvider();
         provider.setPasswordEncoder(passwordEncoder());
         provider.setUserDetailsService(userDetailsService());
         return provider;
     }
+
     @Bean
+    public LoginFilter loginFilter() throws Exception {
+        LoginFilter loginFilter = new LoginFilter();
+        loginFilter.setAuthenticationManager(super.authenticationManagerBean());
+        return loginFilter;
+    }
+//    @Bean
     @Override
     protected UserDetailsService userDetailsService() {
         UserDetailsService userDetailsService = new UserDetailsServiceImpl();

@@ -5,6 +5,7 @@ import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.core.ValueOperations;
 import org.springframework.stereotype.Component;
 
+import java.util.Objects;
 import java.util.concurrent.TimeUnit;
 
 
@@ -24,8 +25,11 @@ public class RedisUtil {
 
     public String get(String key) {
         ValueOperations vo = redisTemplate.opsForValue();
-        String value = vo.get(key).toString();
-        return value;
+        Object o = vo.get(key);
+        if (!Objects.isNull(o)) {
+            return o.toString();
+        }
+        return "";
     }
 
 }

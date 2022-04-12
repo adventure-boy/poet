@@ -2,6 +2,7 @@ package com.adventureboy.test;
 
 import com.adventureboy.system.bean.SysLoginModel;
 import com.adventureboy.system.mapper.SysUserMapper;
+import com.adventureboy.utils.RedisUtil;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -11,10 +12,12 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.stereotype.Component;
 
 import java.util.Collection;
 
 @SpringBootTest
+@Component
 public class Test01 {
     @Autowired
     SysUserMapper sysUserMapper;
@@ -51,6 +54,14 @@ public class Test01 {
         String username = authentication.getName();
         Object principal = authentication.getPrincipal();
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+    }
+
+    @Autowired
+    RedisUtil redisUtil;
+    @Test
+    public void test06() {
+        String ymex = redisUtil.get("ymex");
+        System.out.println(ymex);
     }
 
 }

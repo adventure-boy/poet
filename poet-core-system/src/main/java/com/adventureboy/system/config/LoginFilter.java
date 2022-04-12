@@ -16,8 +16,11 @@ import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 
 public class LoginFilter extends UsernamePasswordAuthenticationFilter {
+    @Autowired
+    VerificationCodeUtil verificationCodeUtil;
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
+        System.out.println(request.getContentType());
         //post方法
         if (!request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
@@ -39,7 +42,7 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
             this.setDetails(request, authRequest);
             return this.getAuthenticationManager().authenticate(authRequest);
         } else {
-            if (!VerificationCodeUtil.checkCode(request.getParameter("verificationCode"))) {
+            if (!verificationCodeUtil.checkCode(request.getParameter("verificationCode"))) {
                 throw new RuntimeException("验证码出错");
             }
             //如果不是json数据格式,那么交给父类处理
