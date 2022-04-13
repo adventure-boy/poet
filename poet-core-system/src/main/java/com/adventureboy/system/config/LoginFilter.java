@@ -20,7 +20,6 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
     VerificationCodeUtil verificationCodeUtil;
     @Override
     public Authentication attemptAuthentication(HttpServletRequest request, HttpServletResponse response) throws AuthenticationException {
-        System.out.println(request.getContentType());
         //post方法
         if (!request.getMethod().equals("POST")) {
             throw new AuthenticationServiceException("Authentication method not supported: " + request.getMethod());
@@ -32,6 +31,9 @@ public class LoginFilter extends UsernamePasswordAuthenticationFilter {
                  sysLoginModel = new ObjectMapper().readValue(request.getInputStream(), SysLoginModel.class);
             } catch (IOException e) {
                 e.printStackTrace();
+            }
+            if (!verificationCodeUtil.checkCode(sysLoginModel.getVerificationCode())) {
+                throw new AuthenticationServiceException("验证码出错");
             }
             String username = sysLoginModel.getUsername();
             username = username != null ? username : "";

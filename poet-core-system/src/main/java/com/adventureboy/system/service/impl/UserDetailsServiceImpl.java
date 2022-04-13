@@ -1,9 +1,7 @@
 package com.adventureboy.system.service.impl;
 
-import com.adventureboy.system.bean.SysLoginModel;
 import com.adventureboy.system.bean.SysUser;
 import com.adventureboy.system.mapper.SysUserMapper;
-import com.mysql.jdbc.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -19,12 +17,12 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        SysLoginModel sysLoginModel = sysUserMapper.selectPasswordByUsername(username);
+        SysUser sysUser = sysUserMapper.selectByUsername(username);
 
-        if (Objects.isNull(sysLoginModel)) {
+        if (Objects.isNull(sysUser)) {
             throw new RuntimeException("用户名或者密码错误");
         }
 
-        return sysLoginModel;
+        return sysUser;
     }
 }

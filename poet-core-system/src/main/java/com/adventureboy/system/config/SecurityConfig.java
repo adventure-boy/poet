@@ -1,13 +1,17 @@
 package com.adventureboy.system.config;
 
+import com.adventureboy.system.bean.SysUser;
 import com.adventureboy.system.service.impl.PoetAuthenticationProvider;
 import com.adventureboy.system.service.impl.UserDetailsServiceImpl;
+import com.adventureboy.vo.Result;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Conditional;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
+import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -15,9 +19,12 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
 import java.io.PrintWriter;
+import java.security.Principal;
+import java.text.SimpleDateFormat;
 import java.time.YearMonth;
+import java.util.Map;
 
-@Configuration
+@EnableWebSecurity
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     public void configure(WebSecurity web) throws Exception {
@@ -32,6 +39,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 .and()
                 .addFilterAt(loginFilter(), UsernamePasswordAuthenticationFilter.class);
+
     }
 //@Override
 //protected void configure(HttpSecurity http) throws Exception {
@@ -76,6 +84,33 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public LoginFilter loginFilter() throws Exception {
         LoginFilter loginFilter = new LoginFilter();
         loginFilter.setAuthenticationManager(super.authenticationManagerBean());
+        loginFilter.setAuthenticationSuccessHandler((request,response,authentication)->{
+            SysUser sysUser = (SysUser) authentication.getPrincipal();
+            Result<SysUser> result = new Result<>();
+            response.setContentType("application/json;charset=utf-8");
+            sysUser.setPassword(null);
+            result.success200(sysUser);
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false);
+            //关闭jackson中日期转为时间戳功能,
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+            mapper.setDateFormat(sdf);
+            String s = mapper.writeValueAsString(result);
+            PrintWriter writer = response.getWriter();
+            writer.write(s);
+            writer.flush();
+            writer.close();
+        });
+        loginFilter.setAuthenticationFailureHandler((request,response,exception)->{
+            response.setContentType("application/json;charset=utf-8");
+            PrintWriter writer = response.getWriter();
+            Result<String> result = new Result<>();
+            result.error500(exception.getMessage());
+            String s = new ObjectMapper().writeValueAsString(result);
+            writer.write(s);
+            writer.flush();
+            writer.close();
+        });
         return loginFilter;
     }
 //    @Bean

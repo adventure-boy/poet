@@ -15,6 +15,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Component;
 
 import java.util.Collection;
+import java.util.UUID;
 
 @SpringBootTest
 @Component
@@ -62,6 +63,11 @@ public class Test01 {
     public void test06() {
         String ymex = redisUtil.get("ymex");
         System.out.println(ymex);
+    }
+
+    public static void main(String[] args) {
+        UUID uuid = UUID.randomUUID();
+        System.out.println(uuid);
     }
 
 }
