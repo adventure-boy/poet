@@ -3,15 +3,21 @@ package com.adventureboy.system.controller;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
 import com.adventureboy.system.bean.SysLoginModel;
+import com.adventureboy.system.bean.SysPermission;
 import com.adventureboy.system.bean.SysUser;
+import com.adventureboy.system.service.SysPermissionService;
 import com.adventureboy.system.service.SysUserService;
 import com.adventureboy.utils.RedisUtil;
 import com.adventureboy.vo.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/login")
@@ -25,6 +31,9 @@ public class LoginController {
 
     @Autowired
     UserDetailsService userDetailsService;
+
+    @Autowired
+    SysPermissionService sysPermissionService;
 
     @GetMapping("/getVerificationCode")
     public Result<String> getVerificationCode() {
@@ -69,6 +78,16 @@ public class LoginController {
 
             return error500;
         }
+
+    }
+
+
+    @GetMapping("/getMenu")
+    public JSONObject getMenu() {
+        JSONObject jsonObject = new JSONObject();
+        SysUser sysUser = (SysUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId(sysUser.getUserId());
+        return null;
 
     }
 }

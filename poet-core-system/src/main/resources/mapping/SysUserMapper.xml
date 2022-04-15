@@ -38,6 +38,9 @@
     id, user_id, username, realname, password, salt, birthday, sex, email, phone, status, 
     create_time, update_time
   </sql>
+  <select id="selectByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+    	SELECT user_id,username,password,realname,birthday,email,phone FROM sys_user WHERE username = #{username}
+  </select>
   <select id="selectMenuByUsername" resultMap="MenuResultMap" parameterType="java.lang.String">
     SELECT
 	    t1.realname,t1.username,t1.birthday,t1.sex,t1.email,t3.role_name,t5.component,t5.component_name,t5.url ,t5.parent_id

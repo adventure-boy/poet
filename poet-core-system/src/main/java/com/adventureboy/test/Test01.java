@@ -24,8 +24,6 @@ public class Test01 {
     SysUserMapper sysUserMapper;
     @Test
     public void test01() {
-        SysLoginModel zhangsan = sysUserMapper.selectPasswordByUsername("zhangsan");
-        System.out.println(zhangsan);
     }
 
     @Test

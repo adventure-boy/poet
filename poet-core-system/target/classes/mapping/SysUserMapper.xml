@@ -16,13 +16,45 @@
     <result column="create_time" property="createTime" jdbcType="TIMESTAMP" />
     <result column="update_time" property="updateTime" jdbcType="TIMESTAMP" />
   </resultMap>
-  <select id="selectByUsername" parameterType="java.lang.String" resultMap="BaseResultMap" >
-    select * from sys_user where username = #{username,jdbcType=VARCHAR}
-  </select>
+  <resultMap id="MenuResultMap" type="com.adventureboy.system.bean.SysMenu">
+    <result column="username" property="username" jdbcType="VARCHAR" />
+    <result column="realname" property="realname" jdbcType="VARCHAR" />
+    <result column="birthday" property="birthday" jdbcType="TIMESTAMP" />
+    <result column="sex" property="sex" jdbcType="BIT" />
+    <result column="email" property="email" jdbcType="VARCHAR" />
+    <result column="phone" property="phone" jdbcType="VARCHAR" />
+    <result column="status" property="status" jdbcType="BIT" />
+    <result column="role_name" property="roleName" jdbcType="VARCHAR" />
+    <result column="role_code" property="roleCode" jdbcType="VARCHAR" />
+    <result column="description" property="description" jdbcType="VARCHAR" />
+    <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
+    <result column="name" property="menuName" jdbcType="VARCHAR" />
+    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="component" property="component" jdbcType="VARCHAR" />
+    <result column="component_name" property="componentName" jdbcType="VARCHAR" />
+  </resultMap>
+
   <sql id="Base_Column_List" >
     id, user_id, username, realname, password, salt, birthday, sex, email, phone, status, 
     create_time, update_time
   </sql>
+  <select id="selectByUsername" resultMap="BaseResultMap" parameterType="java.lang.String">
+    	SELECT user_id,username,password,realname,birthday,email,phone FROM sys_user WHERE username = #{username}
+  </select>
+  <select id="selectMenuByUsername" resultMap="MenuResultMap" parameterType="java.lang.String">
+    SELECT
+	    t1.realname,t1.username,t1.birthday,t1.sex,t1.email,t3.role_name,t5.component,t5.component_name,t5.url ,t5.parent_id
+    FROM
+      sys_user t1
+      LEFT JOIN sys_user_role t2
+      ON t1.user_id = t2.user_id
+      LEFT JOIN sys_role t3
+      ON t2.role_id = t3.role_id
+      LEFT JOIN sys_role_permission t4
+      ON t3.role_id = t4.role_id
+      LEFT JOIN sys_permission t5
+      ON t4.permission_id = t5.permission_id
+  </select>
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />
