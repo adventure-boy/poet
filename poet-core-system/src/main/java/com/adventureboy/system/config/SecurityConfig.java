@@ -13,11 +13,17 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.authentication.AuthenticationSuccessHandler;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 
+import javax.servlet.ServletException;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
 import java.io.PrintWriter;
 import java.security.Principal;
 import java.text.SimpleDateFormat;
@@ -84,22 +90,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     public LoginFilter loginFilter() throws Exception {
         LoginFilter loginFilter = new LoginFilter();
         loginFilter.setAuthenticationManager(super.authenticationManagerBean());
-        loginFilter.setAuthenticationSuccessHandler((request,response,authentication)->{
-            SysUser sysUser = (SysUser) authentication.getPrincipal();
-            Result<SysUser> result = new Result<>();
-            response.setContentType("application/json;charset=utf-8");
-            sysUser.setPassword(null);
-            result.success200(sysUser);
-            ObjectMapper mapper = new ObjectMapper();
-            mapper.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false);
-            //关闭jackson中日期转为时间戳功能,
-            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
-            mapper.setDateFormat(sdf);
-            String s = mapper.writeValueAsString(result);
-            PrintWriter writer = response.getWriter();
-            writer.write(s);
-            writer.flush();
-            writer.close();
+        loginFilter.setAuthenticationSuccessHandler(new AuthenticationSuccessHandler() {
+            public void onAuthenticationSuccess(HttpServletRequest request, HttpServletResponse response, Authentication authentication) throws IOException, ServletException {
+                SysUser sysUser = (SysUser) authentication.getPrincipal();
+                Result<SysUser> result = new Result<>();
+                response.setContentType("application/json;charset=utf-8");
+                sysUser.setPassword(null);
+                result.success200(sysUser);
+                ObjectMapper mapper = new ObjectMapper();
+                mapper.configure(SerializationFeature.WRITE_DURATIONS_AS_TIMESTAMPS, false);
+                //关闭jackson中日期转为时间戳功能,
+                SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+                mapper.setDateFormat(sdf);
+                String s = mapper.writeValueAsString(result);
+                PrintWriter writer = response.getWriter();
+                writer.write(s);
+                writer.flush();
+                writer.close();
+            }
         });
         loginFilter.setAuthenticationFailureHandler((request,response,exception)->{
             response.setContentType("application/json;charset=utf-8");

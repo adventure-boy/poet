@@ -2,6 +2,7 @@ package com.adventureboy.system.controller;
 
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
+import cn.hutool.json.JSONUtil;
 import com.adventureboy.system.bean.SysLoginModel;
 import com.adventureboy.system.bean.SysPermission;
 import com.adventureboy.system.bean.SysUser;
@@ -12,11 +13,10 @@ import com.adventureboy.vo.Result;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @RestController
@@ -83,11 +83,12 @@ public class LoginController {
 
 
     @GetMapping("/getMenu")
-    public JSONObject getMenu() {
-        JSONObject jsonObject = new JSONObject();
-        SysUser sysUser = (SysUser)SecurityContextHolder.getContext().getAuthentication().getPrincipal();
-        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId(sysUser.getUserId());
-        return null;
-
+    public Result<List<SysPermission>> getMenu(String userId) {
+        Result<List<SysPermission>> result = new Result<>();
+        List<JSONObject> list = new ArrayList<>();
+        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId("7e06d237-87af-497c-87f0-65ec8bcd200c");
+        result.success200(sysPermissions);
+        return result;
     }
+
 }

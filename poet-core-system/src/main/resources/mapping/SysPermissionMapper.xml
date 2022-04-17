@@ -13,7 +13,7 @@
   <sql id="Base_Column_List" >
     id, permission_id, parent_id, name, url, component, component_name
   </sql>
-  <select id="SysPermissionMapper" resultType="java.util.List" parameterType="java.lang.String">
+  <select id="selectSysPermissionsByUserId" resultType="java.util.List" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
 	    t5.*
     FROM
