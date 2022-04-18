@@ -6,7 +6,7 @@
     <result column="permission_id" property="permissionId" jdbcType="VARCHAR" />
     <result column="parent_id" property="parentId" jdbcType="VARCHAR" />
     <result column="name" property="name" jdbcType="VARCHAR" />
-    <result column="url" property="url" jdbcType="VARCHAR" />
+    <result column="path" property="path" jdbcType="VARCHAR" />
     <result column="component" property="component" jdbcType="VARCHAR" />
     <result column="component_name" property="componentName" jdbcType="VARCHAR" />
   </resultMap>
@@ -15,7 +15,7 @@
   </sql>
   <select id="selectSysPermissionsByUserId" resultType="java.util.List" parameterType="java.lang.String" resultMap="BaseResultMap">
     SELECT
-	    t5.*
+	    t5.parent_id,t5.permission_id,t5.path,t5.`name`,t5.component
     FROM
 	    sys_permission t5
     WHERE

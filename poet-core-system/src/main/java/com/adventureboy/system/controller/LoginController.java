@@ -10,6 +10,8 @@ import com.adventureboy.system.service.SysPermissionService;
 import com.adventureboy.system.service.SysUserService;
 import com.adventureboy.utils.RedisUtil;
 import com.adventureboy.vo.Result;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonInclude;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -83,10 +85,10 @@ public class LoginController {
 
 
     @GetMapping("/getMenu")
+    @JsonIgnoreProperties({"permissionId","parentId"})
     public Result<List<SysPermission>> getMenu(String userId) {
         Result<List<SysPermission>> result = new Result<>();
-        List<JSONObject> list = new ArrayList<>();
-        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId("7e06d237-87af-497c-87f0-65ec8bcd200c");
+        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId("288f00cc-1a8a-4196-a323-839491275b73");
         result.success200(sysPermissions);
         return result;
     }
