@@ -3,6 +3,7 @@ package com.adventureboy.system.controller;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.json.JSONObject;
 import cn.hutool.json.JSONUtil;
+import com.adventureboy.constant.CommonConstant;
 import com.adventureboy.system.bean.SysLoginModel;
 import com.adventureboy.system.bean.SysPermission;
 import com.adventureboy.system.bean.SysUser;
@@ -22,7 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @RestController
-@RequestMapping("/login")
+@RequestMapping("/system")
 public class LoginController {
     Logger logger = LoggerFactory.getLogger(this.getClass());
     @Autowired
@@ -53,11 +54,10 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/confirm")
+    @PostMapping("/login")
     public Result<JSONObject> login(@RequestBody SysLoginModel loginModel) {
         Result<JSONObject> result = new Result<>();
         String username = loginModel.getUsername();
-        String password = loginModel.getPassword();
         String verificationCode = loginModel.getVerificationCode();//验证码
         if (verificationCode == null) {
             Result<JSONObject> error500 = result.error500("验证码错误");
@@ -93,4 +93,11 @@ public class LoginController {
         return result;
     }
 
+    @GetMapping("/getComponents")
+    public Result<List<SysPermission>> getComponents() {
+        Result<List<SysPermission>> result = new Result<>();
+        List<SysPermission> sysPermissions = sysPermissionService.selectComponentsByUserId("288f00cc-1a8a-4196-a323-839491275b73");
+        result.success200(sysPermissions);
+        return result;
+    }
 }

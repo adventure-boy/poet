@@ -28,6 +28,11 @@ public class SysPermissionServiceImpl implements SysPermissionService {
         return fatherPermission;
     }
 
+    @Override
+    public List<SysPermission> selectComponentsByUserId(String userId) {
+        return sysPermissionMapper.selectComponentsByUserId(userId);
+    }
+
     /**
      * @param sysPermissionList 此用户所有的菜单
      * @param permission    父级菜单

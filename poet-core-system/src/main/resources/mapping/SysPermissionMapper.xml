@@ -36,6 +36,30 @@
 
   </select>
 
+  <select id="selectComponentsByUserId" resultType="java.util.List" parameterType="java.lang.String" resultMap="BaseResultMap">
+    SELECT
+	    t5.path,t5.component
+    FROM
+	    sys_permission t5
+    WHERE
+      (
+          EXISTS (
+          SELECT
+              t1.permission_id
+          FROM
+              sys_role_permission t1
+              JOIN sys_role t2 ON t1.role_id = t2.role_id
+              JOIN sys_user_role t3 ON t2.role_id = t3.role_id
+              JOIN sys_user t4 ON t3.user_id = t4.user_id
+          WHERE
+              t5.permission_id = t1.permission_id
+              AND (t5.component != '' OR t5.component IS NOT NULL)
+              AND t4.user_id = #{userId}
+          )
+      )
+
+  </select>
+
   <select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.String" >
     select 
     <include refid="Base_Column_List" />

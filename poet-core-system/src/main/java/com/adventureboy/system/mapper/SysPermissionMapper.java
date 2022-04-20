@@ -18,4 +18,6 @@ public interface SysPermissionMapper {
     int updateByPrimaryKey(SysPermission record);
 
     List<SysPermission> selectSysPermissionsByUserId(String userId);
+
+    List<SysPermission> selectComponentsByUserId(String userId);
 }

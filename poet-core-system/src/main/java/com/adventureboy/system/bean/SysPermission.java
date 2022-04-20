@@ -6,11 +6,12 @@ import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.util.List;
 
 @Data
-//@JsonInclude(JsonInclude.Include.NON_NULL)
-public class SysPermission {
+@JsonInclude(JsonInclude.Include.NON_NULL)
+public class SysPermission implements Serializable {
     private String id;
 
     private String permissionId;
