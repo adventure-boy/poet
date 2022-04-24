@@ -54,41 +54,43 @@ public class LoginController {
         }
     }
 
-    @PostMapping("/login")
-    public Result<JSONObject> login(@RequestBody SysLoginModel loginModel) {
-        Result<JSONObject> result = new Result<>();
-        String username = loginModel.getUsername();
-        String verificationCode = loginModel.getVerificationCode();//验证码
-        if (verificationCode == null) {
-            Result<JSONObject> error500 = result.error500("验证码错误");
-            return error500;
-        }
-        //如果redis中可以找到验证码
-        if (redisUtil.get(verificationCode) != null) {
-            //验证用户正确性:存在,是否冻结
-            SysUser sysUser = sysUserService.selectByUsername(username);
-            Result checkAccount = sysUserService.checkAccount(sysUser);
-            //如果查不到,或者冻结,直接返回
-            if (!checkAccount.getIsSuccess()) {
-                return checkAccount;
-            }
-            //验证密码正确性
-
-            return null;
-        } else {
-            Result<JSONObject> error500 = result.error500("验证码错误");
-
-            return error500;
-        }
-
-    }
+//    @PostMapping("/login")
+//    public Result<JSONObject> login(@RequestBody SysLoginModel loginModel) {
+//        Result<JSONObject> result = new Result<>();
+//        String username = loginModel.getUsername();
+//        String verificationCode = loginModel.getVerificationCode();//验证码
+//        if (verificationCode == null) {
+//            Result<JSONObject> error500 = result.error500("验证码错误");
+//            return error500;
+//        }
+//        //如果redis中可以找到验证码
+//        if (redisUtil.get(verificationCode) != null) {
+//            //验证用户正确性:存在,是否冻结
+//            SysUser sysUser = sysUserService.selectByUsername(username);
+//            Result checkAccount = sysUserService.checkAccount(sysUser);
+//            //如果查不到,或者冻结,直接返回
+//            if (!checkAccount.getIsSuccess()) {
+//                return checkAccount;
+//            }
+//            //验证密码正确性
+//
+//            return null;
+//        } else {
+//            Result<JSONObject> error500 = result.error500("验证码错误");
+//
+//            return error500;
+//        }
+//
+//    }
 
 
     @GetMapping("/getMenu")
     @JsonIgnoreProperties({"permissionId","parentId"})
     public Result<List<SysPermission>> getMenu(String userId) {
+        logger.info("userId: "+userId+"  正在获取菜单及路由");
         Result<List<SysPermission>> result = new Result<>();
-        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId("288f00cc-1a8a-4196-a323-839491275b73");
+        List<SysPermission> sysPermissions = sysPermissionService.selectSysPermissionsByUserId(userId);
+        logger.info(sysPermissions.toString());
         result.success200(sysPermissions);
         return result;
     }
